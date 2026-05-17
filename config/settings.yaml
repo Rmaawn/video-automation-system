@@ -1,0 +1,143 @@
+# Video Automation System Configuration
+
+app:
+  name: "Video Automation System"
+  log_level: "INFO"
+  log_dir: "output/logs"
+  output_dir: "output/videos"
+  data_dir: "data/content"
+  db_path: "output/video_automation.db"
+
+heygen:
+  api_base_url: "https://api.heygen.com"
+  avatar_id_env: "HEYGEN_AVATAR_ID"
+  voice_id_env: "HEYGEN_VOICE_ID"
+  video_ratio: "9:16"
+  test_mode: false
+  polling_interval_seconds: 15
+  polling_timeout_seconds: 600
+  max_retries: 3
+  retry_delay_seconds: 5
+  request_timeout_seconds: 30
+
+  # ─── character ───
+  # "avatar" for standard/digital-twin avatars, "talking_photo" for Photo Avatars
+  character_type: "avatar"
+
+  # ─── Avatar IV (motion / gestures) ───
+  # The only way to get hand gestures on Photo / Instant avatars.
+  # Costs ~2x credits per scene vs. plain generation. Requires paid plan.
+  use_avatar_iv: true
+  enhance_motion_prompt: true
+  # talking_style only used when character_type == "talking_photo": "stable" | "expressive"
+  talking_style: "expressive"
+
+  # ─── background (global, applied to every avatar scene) ───
+  # type: "color" | "image" | "video"
+  background:
+    type: "color"
+    value: "#0a0a0a"
+
+  # ─── matting (background removal on avatar) ───
+  # true if you want HeyGen to cut out the avatar's original background
+  matting: false
+
+# ─── Framing presets ───
+# These map MotionDirector framing names → actual HeyGen character params.
+# avatar_style must be: "normal" | "closeUp" | "circle"
+# scale: 0.0–5.0 (1.0 = native). offset: -1..1 normalized.
+framings:
+  wide:
+    avatar_style: "normal"
+    scale: 0.80
+    offset_x: -0.12
+    offset_y: 0.00
+  medium:
+    avatar_style: "normal"
+    scale: 1.00
+    offset_x: 0.00
+    offset_y: 0.00
+  close:
+    avatar_style: "closeUp"
+    scale: 1.25
+    offset_x: 0.00
+    offset_y: 0.05
+  tight:
+    avatar_style: "closeUp"
+    scale: 1.40
+    offset_x: 0.05
+    offset_y: 0.08
+  circle:
+    avatar_style: "circle"
+    scale: 1.00
+    offset_x: 0.00
+    offset_y: 0.00
+    circle_background_color: "#1a1a2e"
+
+# ─── Motion prompt pools (Avatar IV) ───
+# MotionDirector picks one per scene (deterministic by content_id, no repeats
+# within a single video). Add more variants here to increase diversity.
+# Format guidance from HeyGen: "[Body part] + [Action] + [Emotion/intensity]",
+# keep to ≤ 2 short clauses, one gesture per prompt, no manual timing.
+motion_prompts:
+  opening:
+    - "Avatar looks confidently at the camera with a subtle welcoming nod."
+    - "Avatar takes a small breath and opens both hands naturally to begin."
+    - "Avatar greets with a small smile and a slight head tilt."
+  calm:
+    - "Avatar maintains a relaxed posture with subtle hand movements."
+    - "Avatar speaks gently, hands resting near chest area."
+    - "Avatar nods slowly while explaining, hands moving softly."
+  emphasis:
+    - "Right hand gestures outward to emphasize the key point."
+    - "Both hands move forward to highlight the importance."
+    - "Avatar raises eyebrows slightly and opens one hand to stress the idea."
+    - "Avatar leans in subtly and gestures with the right hand for emphasis."
+  excited:
+    - "Avatar gestures enthusiastically with both hands open wide."
+    - "Right hand raises in an energetic explanatory motion."
+    - "Avatar smiles broadly while both hands animate excitement."
+  question:
+    - "Avatar tilts head with a curious expression, both hands open in inquiry."
+    - "Avatar raises one eyebrow and opens a hand questioningly."
+  transition:
+    - "Avatar pauses briefly, then opens a hand to introduce the next idea."
+    - "Avatar nods and gestures sideways to transition to the next point."
+  closing:
+    - "Avatar smiles warmly while bringing hands together in a closing gesture."
+    - "Avatar concludes with a gentle nod and a confident look at the camera."
+    - "Avatar takes a soft breath, places hands down, and ends with a smile."
+
+content:
+  default_book_id: "sample_book"
+
+script:
+  max_sentence_length: 120
+  pause_marker: "..."
+  conversational_prefixes:
+    - "بذار اینطور بگم"
+    - "یه نکته جالب"
+    - "جالب اینجاست که"
+    - "ببین چی میگم"
+    - "یه لحظه صبر کن"
+    - "این خیلی مهمه"
+
+scenes:
+  # Tuned LOWER than before to FORCE more scenes — otherwise the merger
+  # collapses everything into 1–2 long scenes and you lose framing variety.
+  # 200 chars ≈ ~12–15s of speech, which is roughly one shot in IG-style cuts.
+  min_scene_length_chars: 60
+  max_scene_length_chars: 200
+  max_scenes_per_video: 8
+  min_scenes_per_video: 3
+  content_type: "storytelling"
+
+state:
+  max_retries_per_content: 3
+  retry_cooldown_seconds: 60
+
+webhook:
+  enabled: false
+  port: 5000
+  host: "0.0.0.0"
+  secret_env: "WEBHOOK_SECRET"

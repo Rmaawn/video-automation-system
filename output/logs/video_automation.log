@@ -1,0 +1,163 @@
+2026-05-07 15:45:09 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 15:45:10 | INFO     | services.book_loader | Book 'sample_book': 5 added, 0 skipped, 5 total
+2026-05-07 15:45:15 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 15:45:15 | INFO     | services.book_loader | Book 'sample_book': 0 added, 5 skipped, 5 total
+2026-05-07 15:45:22 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 15:45:58 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 15:45:58 | INFO     | services.book_loader | Book 'sample_book': 2 added, 5 skipped, 7 total
+2026-05-07 15:46:07 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 15:47:36 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 15:47:36 | INFO     | services.book_loader | Book 'sample_book': 5 added, 0 skipped, 5 total
+2026-05-07 15:47:46 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 17:10:40 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 17:10:40 | INFO     | services.book_loader | Book 'sample_book': 5 added, 0 skipped, 5 total
+2026-05-07 17:10:48 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 17:10:48 | INFO     | core.pipeline | ============================================================
+2026-05-07 17:10:48 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 17:10:48 | INFO     | core.pipeline | Processing: 1 | chapter_1/1
+2026-05-07 17:10:48 | INFO     | core.state_manager | Content 1 → processing
+2026-05-07 17:10:48 | ERROR    | core.pipeline | Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+Traceback (most recent call last):
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\core\pipeline.py", line 59, in run_single
+    avatar_id = settings.get_required("heygen.avatar_id")
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\config\settings.py", line 75, in get_required
+    raise ValueError(f"Required config '{dotted_key}' not set. Add it to .env file.")
+ValueError: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:10:48 | ERROR    | core.state_manager | Video 1 failed (retry 1): Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:10:48 | ERROR    | core.state_manager | Content 1 failed (retry 1/3): Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:11:26 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 17:11:26 | INFO     | core.pipeline | ============================================================
+2026-05-07 17:11:26 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 17:11:26 | INFO     | core.pipeline | Processing: 2 | chapter_1/2
+2026-05-07 17:11:26 | INFO     | core.state_manager | Content 2 → processing
+2026-05-07 17:11:26 | ERROR    | core.pipeline | Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+Traceback (most recent call last):
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\core\pipeline.py", line 59, in run_single
+    avatar_id = settings.get_required("heygen.avatar_id")
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\config\settings.py", line 75, in get_required
+    raise ValueError(f"Required config '{dotted_key}' not set. Add it to .env file.")
+ValueError: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:11:26 | ERROR    | core.state_manager | Video 2 failed (retry 1): Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:11:26 | ERROR    | core.state_manager | Content 2 failed (retry 1/3): Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:11:51 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 17:11:52 | INFO     | core.pipeline | ============================================================
+2026-05-07 17:11:52 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 17:11:52 | INFO     | core.pipeline | Processing: 3 | chapter_1/3
+2026-05-07 17:11:52 | INFO     | core.state_manager | Content 3 → processing
+2026-05-07 17:11:52 | ERROR    | core.pipeline | Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+Traceback (most recent call last):
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\core\pipeline.py", line 59, in run_single
+    avatar_id = settings.get_required("heygen.avatar_id")
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\config\settings.py", line 75, in get_required
+    raise ValueError(f"Required config '{dotted_key}' not set. Add it to .env file.")
+ValueError: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:11:52 | ERROR    | core.state_manager | Video 3 failed (retry 1): Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:11:52 | ERROR    | core.state_manager | Content 3 failed (retry 1/3): Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:12:54 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 17:12:55 | INFO     | core.pipeline | ============================================================
+2026-05-07 17:12:55 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 17:12:55 | INFO     | core.pipeline | Processing: 4 | chapter_2/1
+2026-05-07 17:12:55 | INFO     | core.state_manager | Content 4 → processing
+2026-05-07 17:12:55 | ERROR    | core.pipeline | Pipeline error: Required config 'HEYGEN_AVATAR_ID' not set. Add it to .env file.
+Traceback (most recent call last):
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\core\pipeline.py", line 59, in run_single
+    avatar_id = settings.get_required("HEYGEN_AVATAR_ID")
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\config\settings.py", line 75, in get_required
+    raise ValueError(f"Required config '{dotted_key}' not set. Add it to .env file.")
+ValueError: Required config 'HEYGEN_AVATAR_ID' not set. Add it to .env file.
+2026-05-07 17:12:55 | ERROR    | core.state_manager | Video 4 failed (retry 1): Pipeline error: Required config 'HEYGEN_AVATAR_ID' not set. Add it to .env file.
+2026-05-07 17:12:55 | ERROR    | core.state_manager | Content 4 failed (retry 1/3): Pipeline error: Required config 'HEYGEN_AVATAR_ID' not set. Add it to .env file.
+2026-05-07 17:52:01 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 17:52:02 | INFO     | core.pipeline | ============================================================
+2026-05-07 17:52:02 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 17:52:02 | INFO     | core.pipeline | Processing: 1 | chapter_1/1
+2026-05-07 17:52:02 | INFO     | core.state_manager | Content 1 → processing
+2026-05-07 17:52:02 | ERROR    | core.pipeline | Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+Traceback (most recent call last):
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\core\pipeline.py", line 59, in run_single
+    avatar_id = settings.get_required("heygen.avatar_id")
+  File "C:\Users\arman\Desktop\Video Automation System\video_automation\config\settings.py", line 75, in get_required
+    raise ValueError(f"Required config '{dotted_key}' not set. Add it to .env file.")
+ValueError: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:52:02 | ERROR    | core.state_manager | Video 5 failed (retry 1): Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 17:52:02 | ERROR    | core.state_manager | Content 1 failed (retry 1/3): Pipeline error: Required config 'heygen.avatar_id' not set. Add it to .env file.
+2026-05-07 18:02:41 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 18:02:42 | INFO     | core.pipeline | ============================================================
+2026-05-07 18:02:42 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 18:02:42 | INFO     | core.pipeline | Processing: 1 | chapter_1/1
+2026-05-07 18:02:42 | INFO     | core.state_manager | Content 1 → processing
+2026-05-07 18:02:42 | INFO     | services.heygen_v2 | Studio API: generating video with 1 scenes
+2026-05-07 18:02:43 | WARNING  | services.heygen_v2 | SSLError, retry 1/3
+2026-05-07 18:02:55 | WARNING  | services.heygen_v2 | SSLError, retry 2/3
+2026-05-07 18:03:08 | INFO     | services.heygen_v2 | Studio video created: ec0a069819ce46d8bd6add22d0fc1e83
+2026-05-07 18:03:08 | INFO     | core.state_manager | Video 6 → HeyGen: ec0a069819ce46d8bd6add22d0fc1e83
+2026-05-07 18:03:08 | INFO     | core.pipeline | Waiting for HeyGen (timeout: 600s)...
+2026-05-07 18:03:08 | INFO     | services.heygen_v2 | Studio API: generating video with 1 scenes
+2026-05-07 18:03:09 | INFO     | services.heygen_v2 | Studio video created: 2f73c52c3f384c179d8729e6dd2c1cef
+2026-05-07 18:03:20 | ERROR    | core.pipeline | HeyGen error: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-05-07 18:03:20 | ERROR    | core.state_manager | Video 6 failed (retry 1): HeyGen error: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-05-07 18:03:20 | ERROR    | core.state_manager | Content 1 failed (retry 1/3): HeyGen error: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-05-07 18:16:39 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 18:16:39 | INFO     | core.pipeline | ============================================================
+2026-05-07 18:16:40 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 18:16:40 | INFO     | core.pipeline | Processing: 1 | chapter_1/1
+2026-05-07 18:16:40 | INFO     | core.state_manager | Content 1 → processing
+2026-05-07 18:16:40 | INFO     | services.heygen_v2 | Studio API: generating video with 1 scenes
+2026-05-07 18:16:41 | INFO     | services.heygen_v2 | Studio video created: 5d019a97c14849b28cedd5803cb8f599
+2026-05-07 18:16:41 | INFO     | core.state_manager | Video 7 → HeyGen: 5d019a97c14849b28cedd5803cb8f599
+2026-05-07 18:16:41 | INFO     | services.heygen_v2 | Waiting for video 5d019a97c14849b28cedd5803cb8f599 (timeout: 600s)...
+2026-05-07 18:16:42 | ERROR    | core.pipeline | HeyGen error: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-05-07 18:16:42 | ERROR    | core.state_manager | Video 7 failed (retry 1): HeyGen error: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-05-07 18:16:42 | ERROR    | core.state_manager | Content 1 failed (retry 1/3): HeyGen error: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-05-07 18:29:26 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 18:29:26 | INFO     | core.pipeline | ============================================================
+2026-05-07 18:29:26 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 18:29:26 | INFO     | core.pipeline | Processing: 1 | chapter_1/1
+2026-05-07 18:29:26 | INFO     | core.state_manager | Content 1 → processing
+2026-05-07 18:29:26 | INFO     | services.heygen_v2 | Studio API: generating video with 1 scenes
+2026-05-07 18:29:35 | WARNING  | services.heygen_v2 | SSLError, retry 1/3
+2026-05-07 18:29:52 | WARNING  | services.heygen_v2 | SSLError, retry 2/3
+2026-05-07 18:30:10 | WARNING  | services.heygen_v2 | SSLError, retry 3/3
+2026-05-07 18:30:30 | ERROR    | core.pipeline | HeyGen error: Max retries (3) exceeded: HTTPSConnectionPool(host='api.heygen.com', port=443): Max retries exceeded with url: /v2/video/generate (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)')))
+2026-05-07 18:30:30 | ERROR    | core.state_manager | Video 8 failed (retry 1): HeyGen error: Max retries (3) exceeded: HTTPSConnectionPool(host='api.heygen.com', port=443): Max retries exceeded with url: /v2/video/generate (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)')))
+2026-05-07 18:30:30 | ERROR    | core.state_manager | Content 1 failed (retry 1/3): HeyGen error: Max retries (3) exceeded: HTTPSConnectionPool(host='api.heygen.com', port=443): Max retries exceeded with url: /v2/video/generate (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)')))
+2026-05-07 18:32:01 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-07 18:32:02 | INFO     | core.pipeline | ============================================================
+2026-05-07 18:32:02 | INFO     | core.pipeline | Pipeline start — book: sample_book
+2026-05-07 18:32:02 | INFO     | core.pipeline | Processing: 2 | chapter_1/2
+2026-05-07 18:32:02 | INFO     | core.state_manager | Content 2 → processing
+2026-05-07 18:32:02 | INFO     | services.heygen_v2 | Studio API: generating video with 1 scenes
+2026-05-07 18:32:18 | WARNING  | services.heygen_v2 | SSLError, retry 1/3
+2026-05-07 18:32:33 | WARNING  | services.heygen_v2 | ConnectionError, retry 2/3
+2026-05-07 18:32:59 | WARNING  | services.heygen_v2 | ConnectionError, retry 3/3
+2026-05-07 18:33:19 | ERROR    | core.pipeline | HeyGen error: Max retries (3) exceeded: ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+2026-05-07 18:33:19 | ERROR    | core.state_manager | Video 9 failed (retry 1): HeyGen error: Max retries (3) exceeded: ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+2026-05-07 18:33:19 | ERROR    | core.state_manager | Content 2 failed (retry 1/3): HeyGen error: Max retries (3) exceeded: ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+2026-05-17 14:34:07 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-17 14:35:07 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-17 14:35:45 | INFO     | models.database | Database initialized: output\video_automation.db
+2026-05-17 19:09:00 | INFO     | models.database | Database initialized: C:\Users\arman\AppData\Local\Temp\vidauto_test__mysg73_\test.db
