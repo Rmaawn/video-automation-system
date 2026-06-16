@@ -53,7 +53,8 @@ def classify(avatar: dict) -> tuple[str, list[str]]:
 
 
 def main():
-    avatar_id = settings.get_required("heygen.avatar_id")
+    # Use the first id of the pool (HEYGEN_AVATAR_IDS) or the single avatar id.
+    avatar_id = settings.get_avatar_pool()[0]
     voice_id = settings.get("heygen.voice_id", "<not set>")
     client = HeyGenV3()
 

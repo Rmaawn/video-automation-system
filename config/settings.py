@@ -37,7 +37,9 @@ class Settings:
         env_map = {
             "heygen.api_key": "HEYGEN_API_KEY",
             "heygen.avatar_id": "HEYGEN_AVATAR_ID",
+            "heygen.avatar_ids": "HEYGEN_AVATAR_IDS",
             "heygen.voice_id": "HEYGEN_VOICE_ID",
+            "heygen.video_ratio": "HEYGEN_VIDEO_RATIO",
             "heygen.api_base_url": "HEYGEN_API_BASE_URL",
             "heygen.test_mode": "HEYGEN_TEST_MODE",
             "app.log_level": "APP_LOG_LEVEL",
@@ -80,6 +82,21 @@ class Settings:
 
     def get_section(self, section: str) -> dict[str, Any]:
         return self.get(section, {})
+
+    def get_avatar_pool(self) -> list[str]:
+        """Resolve the avatar pool used to rotate camera angles across scenes.
+
+        Prefers `heygen.avatar_ids` (comma-separated → multiple looks/angles),
+        falling back to the single required `heygen.avatar_id`. Rotating
+        through several avatar looks is the ONLY way to get real angle/outfit
+        variety within one HeyGen video — there is no camera API.
+        """
+        avatar_ids_csv = self.get("heygen.avatar_ids")
+        if avatar_ids_csv:
+            pool = [a.strip() for a in str(avatar_ids_csv).split(",") if a.strip()]
+            if pool:
+                return pool
+        return [self.get_required("heygen.avatar_id")]
 
 
 settings = Settings()

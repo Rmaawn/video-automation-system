@@ -35,6 +35,7 @@ class HeyGenV3:
     def __init__(self):
         self._api_key = settings.get_required("heygen.api_key")
         self._base = settings.get("heygen.api_base_url", "https://api.heygen.com")
+        self._upload_base = settings.get("heygen.upload_base_url", "https://upload.heygen.com")
         self._max_retries = settings.get("heygen.max_retries", 3)
         self._retry_delay = settings.get("heygen.retry_delay_seconds", 5)
         self._timeout = settings.get("heygen.request_timeout_seconds", 30)
@@ -99,14 +100,19 @@ class HeyGenV3:
 
         db_id = asset_repo.create(str(path), path.name, mime, size, checksum)
 
+        # HeyGen asset upload lives on a SEPARATE host (upload.heygen.com) and
+        # expects the raw file bytes as the request body with Content-Type set
+        # to the file's MIME type — NOT a multipart form against api.heygen.com.
         with open(file_path, "rb") as f:
-            files = {"file": (path.name, f, mime)}
             response = self._request_with_retry(
-                "POST", f"{self._base}/v3/assets", files=files,
+                "POST", f"{self._upload_base}/v1/asset",
+                data=f.read(),
+                headers={"content-type": mime},
             )
 
         data = response.json()
-        asset_id = data.get("data", {}).get("asset_id")
+        payload = data.get("data", {})
+        asset_id = payload.get("id") or payload.get("asset_id") or payload.get("image_key")
         if not asset_id:
             asset_repo.mark_failed(db_id, str(data))
             raise HeyGenError(f"No asset_id in response: {data}")
@@ -118,12 +124,28 @@ class HeyGenV3:
     # ─── AVATARS ───
 
     def list_avatars(self) -> list[dict]:
-        response = self._request_with_retry("GET", f"{self._base}/v3/avatars")
-        return response.json().get("data", {}).get("list", [])
+        """List avatars via the documented GET /v2/avatars.
+
+        The v2 response splits results into `avatars` (studio/digital-twin)
+        and `talking_photos` (Photo Avatars); we merge both so callers see
+        every usable character id.
+        """
+        response = self._request_with_retry("GET", f"{self._base}/v2/avatars")
+        data = response.json().get("data", {})
+        if isinstance(data, list):
+            return data
+        return list(data.get("avatars", [])) + list(data.get("talking_photos", []))
 
     def get_avatar(self, avatar_id: str) -> dict:
-        response = self._request_with_retry("GET", f"{self._base}/v3/avatars/{avatar_id}")
-        return response.json().get("data", {})
+        """Resolve a single avatar by id from the GET /v2/avatars listing.
+
+        HeyGen has no stable per-id detail endpoint across avatar types, so we
+        match against the list (covers both avatars and talking_photos).
+        """
+        for a in self.list_avatars():
+            if avatar_id in (a.get("avatar_id"), a.get("talking_photo_id"), a.get("id")):
+                return a
+        return {}
 
     # ─── VOICES ───
 
@@ -145,7 +167,12 @@ class HeyGenV3:
     # ─── CREDITS ───
 
     def get_credits(self) -> dict:
-        response = self._request_with_retry("GET", f"{self._base}/v3/user/credits")
+        """Remaining API quota via the documented GET /v2/user/remaining_quota.
+
+        Response `data.remaining_quota` is in API credit units (1 credit ≈
+        1 minute of standard video; Avatar IV scenes cost more).
+        """
+        response = self._request_with_retry("GET", f"{self._base}/v2/user/remaining_quota")
         return response.json().get("data", {})
 
     # ─── INTERNAL ───

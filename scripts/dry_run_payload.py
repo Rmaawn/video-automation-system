@@ -47,12 +47,12 @@ def main():
     processed = raw if args.no_process else ScriptProcessor().process(raw)
     sequence = SceneBuilder().build(processed)
 
-    avatar_id = settings.get_required("heygen.avatar_id")
+    avatar_pool = settings.get_avatar_pool()
     voice_id = settings.get_required("heygen.voice_id")
     character_type = settings.get("heygen.character_type", "avatar")
 
     studio_scenes = sequence.to_studio_scenes(
-        avatar_id, voice_id,
+        avatar_pool, voice_id,
         character_type=character_type,
         seed=title,
     )
@@ -63,6 +63,7 @@ def main():
     payload = {
         "title": title,
         "dimension": dim,
+        "caption": settings.get("heygen.caption", True),
         "test": settings.get("heygen.test_mode", False),
         "video_inputs": studio_scenes,
     }

@@ -39,12 +39,17 @@ class Framing:
 
 # Built-in framing presets. Overridable per-key in settings.yaml under
 # `framings:`. Each preset maps to specific HeyGen character params.
+#
+# NOTE: offsets are kept at 0 by default. Non-zero offsets push the avatar
+# off-center and frequently cause "avatar in the corner" framing for
+# portrait (9:16) Photo Avatars whose source image is already cropped.
+# Variety here comes from avatar_style (normal/closeUp/circle) + scale.
 DEFAULT_FRAMINGS: dict[str, dict] = {
-    "wide":     {"avatar_style": "normal",  "scale": 0.80, "offset_x": -0.12, "offset_y":  0.00},
-    "medium":   {"avatar_style": "normal",  "scale": 1.00, "offset_x":  0.00, "offset_y":  0.00},
-    "close":    {"avatar_style": "closeUp", "scale": 1.25, "offset_x":  0.00, "offset_y":  0.05},
-    "tight":    {"avatar_style": "closeUp", "scale": 1.40, "offset_x":  0.05, "offset_y":  0.08},
-    "circle":   {"avatar_style": "circle",  "scale": 1.00, "offset_x":  0.00, "offset_y":  0.00,
+    "wide":     {"avatar_style": "normal",  "scale": 0.90},
+    "medium":   {"avatar_style": "normal",  "scale": 1.00},
+    "close":    {"avatar_style": "closeUp", "scale": 1.00},
+    "tight":    {"avatar_style": "closeUp", "scale": 1.20},
+    "circle":   {"avatar_style": "circle",  "scale": 1.00,
                  "circle_background_color": "#1a1a2e"},
 }
 

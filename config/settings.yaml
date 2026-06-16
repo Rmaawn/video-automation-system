@@ -14,6 +14,11 @@ heygen:
   voice_id_env: "HEYGEN_VOICE_ID"
   video_ratio: "9:16"
   test_mode: false
+
+  # Burned-in subtitles (top-level `caption` in /v2/video/generate). ON by
+  # default — most Instagram/Reels viewers watch muted, so captions are
+  # essential for retention.
+  caption: true
   polling_interval_seconds: 15
   polling_timeout_seconds: 600
   max_retries: 3
@@ -43,35 +48,28 @@ heygen:
   matting: false
 
 # ─── Framing presets ───
-# These map MotionDirector framing names → actual HeyGen character params.
-# avatar_style must be: "normal" | "closeUp" | "circle"
-# scale: 0.0–5.0 (1.0 = native). offset: -1..1 normalized.
+# Maps MotionDirector framing names → real HeyGen character params.
+# avatar_style: "normal" | "closeUp" | "circle"  (HeyGen's only framing modes)
+# scale: 0.0–5.0 (1.0 = native).
+# offset_x/offset_y: KEEP AT 0 unless you really know what you're doing.
+#   Non-zero values push the avatar off-center and often produce a
+#   "corner of frame" look for portrait Photo Avatars.
 framings:
   wide:
     avatar_style: "normal"
-    scale: 0.80
-    offset_x: -0.12
-    offset_y: 0.00
+    scale: 0.90
   medium:
     avatar_style: "normal"
     scale: 1.00
-    offset_x: 0.00
-    offset_y: 0.00
   close:
     avatar_style: "closeUp"
-    scale: 1.25
-    offset_x: 0.00
-    offset_y: 0.05
+    scale: 1.00
   tight:
     avatar_style: "closeUp"
-    scale: 1.40
-    offset_x: 0.05
-    offset_y: 0.08
+    scale: 1.20
   circle:
     avatar_style: "circle"
     scale: 1.00
-    offset_x: 0.00
-    offset_y: 0.00
     circle_background_color: "#1a1a2e"
 
 # ─── Motion prompt pools (Avatar IV) ───

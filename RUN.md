@@ -9,13 +9,17 @@ pip install -r requirements.txt
 ```
 copy .env.example .env
 ```
-فایل `.env` رو باز کن و این سه تا رو پر کن:
+فایل `.env` رو باز کن و پر کن:
 ```
 HEYGEN_API_KEY=کلید_خودت
-HEYGEN_AVATAR_ID=آواتار_خودت
 HEYGEN_VOICE_ID=صدای_خودت
+# یک آواتار تکی:
+HEYGEN_AVATAR_ID=آواتار_خودت
+# یا چند لوک/زاویه (توصیه‌شده برای تنوع نما):
+HEYGEN_AVATAR_IDS=id1,id2,id3
 ```
 > از پنل HeyGen → Settings → API
+> لیست لوک‌های آواتار خودت: `python scripts/list_looks.py`
 
 ## ۳. گذاشتن محتوای کتاب
 فقط **یک فایل**: `data/content/book.json`
@@ -44,10 +48,13 @@ HEYGEN_VOICE_ID=صدای_خودت
 
 | دستور | کار |
 |---|---|
-| `python main.py load` | لود کتاب از book.json |
-| `python main.py` | ساخت **یک** ویدیو |
+| `python main.py` | تست سریع: ساخت **یک** ویدیوی تازه از اولین بخش (بدون دیتابیس) |
+| `python main.py load` | لود/همگام‌سازی کتاب از book.json به دیتابیس |
+| `python main.py run` | ساخت **یک** ویدیو از بخش بعدیِ در صف (با ردیابی دیتابیس) |
 | `python main.py batch` | ساخت **همه** ویدیوهای باقی‌مونده |
 | `python main.py status` | وضعیت سیستم |
+
+> هر ویدیو **چندسکانسی (حداقل ۳ سکانس)**، **عمودی 9:16** و با **زیرنویس روشن** ساخته می‌شه — بهینه برای اینستاگرام.
 
 ## 📌 جریان کار
 

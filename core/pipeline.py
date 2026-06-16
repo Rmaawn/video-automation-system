@@ -67,12 +67,12 @@ class VideoPipeline:
 
             sequence = self._scene_builder.build(processed)
 
-            avatar_id = settings.get_required("heygen.avatar_id")
+            avatar_pool = settings.get_avatar_pool()
             voice_id = settings.get_required("heygen.voice_id")
 
             character_type = settings.get("heygen.character_type", "avatar")
             studio_scenes = sequence.to_studio_scenes(
-                avatar_id, voice_id,
+                avatar_pool, voice_id,
                 character_type=character_type,
                 seed=f"{content['book_id']}/{content['chapter']}/{content['section']}",
             )
@@ -87,15 +87,15 @@ class VideoPipeline:
             if video_record:
                 self._state_mgr.mark_video_processing(video_record["id"], heygen_id)
 
-            for i, scene in enumerate(sequence.scenes):
-                video_repo.upsert_scene(video_record["id"], i, {
-                    "avatar_id": avatar_id,
-                    "voice_id": voice_id,
-                    "voice_emotion": scene.emotion,
-                    "script": scene.text,
-                    "background_type": "color",
-                    "duration_estimate": scene.duration_estimate,
-                })
+                for i, scene in enumerate(sequence.scenes):
+                    video_repo.upsert_scene(video_record["id"], i, {
+                        "avatar_id": avatar_pool[i % len(avatar_pool)],
+                        "voice_id": voice_id,
+                        "voice_emotion": scene.emotion,
+                        "script": scene.text,
+                        "background_type": "color",
+                        "duration_estimate": scene.duration_estimate,
+                    })
 
             download_url = self.heygen.wait_for_video(heygen_id)
 

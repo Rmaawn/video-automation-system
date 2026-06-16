@@ -28,9 +28,22 @@ class HeyGenV2:
 
     # ─── STUDIO API ───
 
+    # Aspect ratio → HeyGen dimension. Portrait (9:16) is the default
+    # because the system targets mobile / Instagram Reels.
+    ASPECT_RATIOS: dict[str, dict[str, int]] = {
+        "9:16":  {"width": 1080, "height": 1920},  # portrait — mobile / Reels / TikTok
+        "16:9":  {"width": 1920, "height": 1080},  # landscape — YouTube
+        "1:1":   {"width": 1080, "height": 1080},  # square — IG feed
+        "4:5":   {"width": 1080, "height": 1350},  # portrait — IG feed
+    }
+
     def generate_video(self, video_inputs: list[dict], **kwargs) -> str:
         """
         POST /v2/video/generate — Studio API.
+
+        dimension is ALWAYS set explicitly. If neither `dimension` nor a
+        known `aspect_ratio` is given, defaults to portrait 1080x1920 —
+        anything else risks HeyGen falling back to its own (landscape) default.
 
         Returns video_id.
         """
@@ -39,22 +52,43 @@ class HeyGenV2:
             "test": kwargs.get("test_mode", False),
         }
 
+        # Burned-in subtitles. HeyGen's /v2/video/generate exposes this ONLY as
+        # a top-level boolean `caption` — there is no per-scene subtitle object
+        # (the API silently ignores one). Captions are essential for Instagram
+        # Reels (most viewers watch muted), so this defaults to True.
+        caption = kwargs.get("caption")
+        if caption is None:
+            caption = settings.get("heygen.caption", True)
+        payload["caption"] = bool(caption)
+
         if kwargs.get("callback_url"):
             payload["callback_url"] = kwargs["callback_url"]
 
         if kwargs.get("dimension"):
             payload["dimension"] = kwargs["dimension"]
         else:
-            ratio = kwargs.get("aspect_ratio", settings.get("heygen.video_ratio", "9:16"))
-            if ratio == "9:16":
-                payload["dimension"] = {"width": 1080, "height": 1920}
-            elif ratio == "16:9":
-                payload["dimension"] = {"width": 1920, "height": 1080}
+            ratio = kwargs.get("aspect_ratio") or settings.get("heygen.video_ratio", "9:16")
+            ratio = str(ratio).strip()
+            dimension = self.ASPECT_RATIOS.get(ratio)
+            if dimension is None:
+                logger.warning(
+                    "Unknown aspect_ratio %r — falling back to portrait 9:16. "
+                    "Supported: %s", ratio, list(self.ASPECT_RATIOS.keys()),
+                )
+                dimension = self.ASPECT_RATIOS["9:16"]
+            payload["dimension"] = dimension
 
         if kwargs.get("title"):
             payload["title"] = kwargs["title"]
 
-        logger.info("Studio API: generating video with %d scenes", len(video_inputs))
+        dim = payload["dimension"]
+        orientation = "portrait" if dim["height"] > dim["width"] else (
+            "landscape" if dim["width"] > dim["height"] else "square"
+        )
+        logger.info(
+            "Studio API: generating %d-scene video, %dx%d (%s)",
+            len(video_inputs), dim["width"], dim["height"], orientation,
+        )
 
         response = self._request_with_retry(
             "POST",
@@ -195,14 +229,15 @@ class HeyGenV2:
         if voice_emotion:
             voice["emotion"] = voice_emotion
 
+        # NOTE: subtitles are NOT a per-scene field in /v2/video/generate.
+        # They are controlled by the top-level `caption` boolean on the
+        # payload (see generate_video). The `subtitle` arg is kept for API
+        # compatibility but intentionally does not emit a per-scene object.
         scene = {
             "character": character,
             "voice": voice,
             "background": {"type": background_type, "value": background_value},
         }
-
-        if subtitle:
-            scene["subtitle"] = {"enable": True, "position": "bottom"}
 
         return scene
 

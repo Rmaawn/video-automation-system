@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
 """
-Video Automation System — test entry point.
+Video Automation System — CLI entry point.
 
-Reads data/content/book.json, takes the first non-empty section, and
-generates ONE HeyGen video from it. No database checks, no pending
-state, no "already done" logic — every run produces a fresh video.
+Commands
+--------
+    python main.py                 Quick test: generate ONE fresh video from the
+                                   first non-empty section of book.json (no DB,
+                                   always regenerates — good for checking your
+                                   avatar / voice / framing setup).
+    python main.py load            Sync book.json → database (skips unchanged).
+    python main.py run             Process the next PENDING section via the
+                                   full pipeline (DB-tracked, won't repeat).
+    python main.py batch           Process ALL pending sections via the pipeline.
+    python main.py status          Show system status (content + videos).
 
-Usage:
-    python video_automation/main.py
+Every generated video is multi-scene (≥3 scenes), portrait 9:16 by default,
+with burned-in captions — optimized for Instagram Reels.
 """
 
 import json
@@ -46,7 +54,8 @@ def read_first_section() -> tuple[str, str, str, str]:
     raise ValueError(f"No non-empty section found in {book_path}")
 
 
-def main() -> int:
+def quick_test() -> int:
+    """Generate one fresh video from the first section — no DB, always runs."""
     book_id, chapter_id, section_id, raw_text = read_first_section()
     title = f"{book_id}/{chapter_id}/{section_id}"
     print(f"Content : {title}")
@@ -56,12 +65,13 @@ def main() -> int:
     sequence = SceneBuilder().build(processed)
     print(f"Scenes  : {sequence.total_scenes} (~{sequence.estimated_duration:.0f}s)")
 
-    avatar_id = settings.get_required("heygen.avatar_id")
     voice_id = settings.get_required("heygen.voice_id")
     character_type = settings.get("heygen.character_type", "avatar")
+    avatar_pool = settings.get_avatar_pool()
+    print(f"Avatars : {len(avatar_pool)} in pool")
 
     studio_scenes = sequence.to_studio_scenes(
-        avatar_id, voice_id,
+        avatar_pool, voice_id,
         character_type=character_type,
         seed=title,
     )
@@ -89,6 +99,69 @@ def main() -> int:
         return 1
     finally:
         client.close()
+
+
+def cmd_load() -> int:
+    from services.book_loader import BookLoader
+
+    counts = BookLoader().load()
+    print(f"book.json synced → added: {counts['added']}, "
+          f"updated: {counts['updated']}, unchanged: {counts['unchanged']}")
+    return 0
+
+
+def cmd_run() -> int:
+    from core.pipeline import VideoPipeline
+
+    pipeline = VideoPipeline()
+    try:
+        result = pipeline.run_single()
+    finally:
+        pipeline.cleanup()
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0 if result.get("status") in ("success", "no_content") else 1
+
+
+def cmd_batch() -> int:
+    from core.pipeline import VideoPipeline
+
+    pipeline = VideoPipeline()
+    try:
+        results = pipeline.run_batch()
+    finally:
+        pipeline.cleanup()
+    ok = sum(1 for r in results if r.get("status") == "success")
+    print(f"\nBatch done — {ok}/{len(results)} succeeded")
+    return 0
+
+
+def cmd_status() -> int:
+    from core.pipeline import VideoPipeline
+
+    summary = VideoPipeline().get_status()
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    return 0
+
+
+COMMANDS = {
+    "load": cmd_load,
+    "run": cmd_run,
+    "batch": cmd_batch,
+    "status": cmd_status,
+}
+
+
+def main() -> int:
+    if len(sys.argv) < 2:
+        return quick_test()
+
+    command = sys.argv[1].lower()
+    handler = COMMANDS.get(command)
+    if handler is None:
+        print(f"Unknown command: {command!r}")
+        print(f"Available: {', '.join(COMMANDS)} (or no argument for a quick test run)")
+        return 2
+    return handler()
 
 
 if __name__ == "__main__":

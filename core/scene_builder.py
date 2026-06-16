@@ -37,7 +37,7 @@ class SceneSequence:
 
     def to_studio_scenes(
         self,
-        avatar_id: str,
+        avatar_id: str | list[str],
         voice_id: str,
         subtitle: bool = True,
         character_type: str = "avatar",
@@ -45,10 +45,17 @@ class SceneSequence:
     ) -> list[dict]:
         """Convert to HeyGen V2 Studio API video_inputs format.
 
-        Framing (avatar_style/scale/offset) and Avatar IV motion prompts
-        are produced by MotionDirector per scene.
+        avatar_id can be a single id OR a list of ids (an "avatar pool").
+        When a list is given, scenes rotate through the pool so different
+        camera angles / outfits / poses appear within one video — this is
+        the ONLY way to get real angle variety, because HeyGen has no
+        camera-rotation API.
         """
         from services.heygen_v2 import HeyGenV2
+
+        avatar_pool = [avatar_id] if isinstance(avatar_id, str) else list(avatar_id)
+        if not avatar_pool:
+            raise ValueError("avatar_id must be a non-empty string or list")
 
         director = MotionDirector(seed=seed)
         bg_type = settings.get("heygen.background.type", "color")
@@ -73,9 +80,11 @@ class SceneSequence:
                 is_last=is_last,
             )
 
+            scene_avatar_id = avatar_pool[i % len(avatar_pool)]
+
             studio_scene = HeyGenV2.build_scene(
                 text=scene.text,
-                avatar_id=avatar_id,
+                avatar_id=scene_avatar_id,
                 voice_id=voice_id,
                 voice_emotion=scene.emotion,
                 background_type=bg_type,
@@ -141,6 +150,7 @@ class SceneBuilder:
         scenes = self._assign_attributes(segments)
         scenes = self._merge_short(scenes)
         scenes = self._enforce_limits(scenes)
+        scenes = self._ensure_min_scenes(scenes)
         return SceneSequence(scenes=scenes)
 
     def _segment_text(self, text: str) -> list[str]:
@@ -271,6 +281,72 @@ class SceneBuilder:
             s.index = i
 
         return merged
+
+    # Framing labels (mapped in MotionDirector.VARIATION_TO_FRAMING) cycled
+    # onto scenes produced by splitting, so each forced scene gets a visibly
+    # different shot than its neighbour.
+    _SPLIT_VARIATIONS = ["close", "emphasize", "wide", "medium"]
+
+    def _ensure_min_scenes(self, scenes: list[Scene]) -> list[Scene]:
+        """Guarantee at least `min_scenes_per_video` content scenes.
+
+        Short sections naturally segment into 1–2 scenes, but the product
+        requires every video to be multi-scene (default ≥3) so it reads as a
+        produced reel with shot variety rather than a single static talking
+        head. We split the longest content scene at a word boundary until the
+        minimum is met, assigning a rotating framing so each new scene looks
+        different. (Avatar-pool rotation in to_studio_scenes adds further
+        angle/outfit variety on top of this.)
+        """
+        def content_count() -> int:
+            return sum(1 for s in scenes if not s.is_pause)
+
+        guard = 0
+        while content_count() < self._min_scenes and guard < 50:
+            guard += 1
+            candidates = [
+                s for s in scenes
+                if not s.is_pause and len(s.text.split()) >= 2
+            ]
+            if not candidates:
+                break  # nothing left long enough to split
+
+            target = max(candidates, key=lambda s: len(s.text))
+            first, second = self._split_text_in_half(target.text)
+            if not second:
+                break
+
+            idx = scenes.index(target)
+            target.text = first
+            target.duration_estimate = self._estimate_duration(first)
+
+            next_var = self._SPLIT_VARIATIONS[
+                content_count() % len(self._SPLIT_VARIATIONS)
+            ]
+            scenes.insert(idx + 1, Scene(
+                index=idx + 1,
+                text=second,
+                variation=next_var,
+                emotion=target.emotion,
+                duration_estimate=self._estimate_duration(second),
+            ))
+
+        for i, s in enumerate(scenes):
+            s.index = i
+        return scenes
+
+    @staticmethod
+    def _split_text_in_half(text: str) -> tuple[str, str]:
+        words = text.split()
+        if len(words) < 2:
+            return text, ""
+        mid = len(words) // 2
+        return " ".join(words[:mid]).strip(), " ".join(words[mid:]).strip()
+
+    @staticmethod
+    def _estimate_duration(text: str) -> float:
+        clean = text.replace("...", "")
+        return round(max(2.0, len(clean) / 15), 1)
 
     def _enforce_limits(self, scenes: list[Scene]) -> list[Scene]:
         if len(scenes) <= self._max_scenes:
