@@ -1,0 +1,32 @@
+# ─── Secrets ───
+.env
+*.env
+!.env.example
+
+# ─── Python ───
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ─── Generated artifacts ───
+output/
+**/output/videos/*.mp4
+**/output/logs/*.log
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+
+# ─── OS / editor ───
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ─── Local scratch ───
+_p.json
+_p.err
